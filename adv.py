@@ -5,6 +5,8 @@ from world import World
 import random
 from ast import literal_eval
 
+from util import Stack, Queue
+
 # Load world
 world = World()
 
@@ -27,11 +29,38 @@ player = Player(world.starting_room)
 
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
+
+
 traversal_path = []
 
+# The graph should be a dictionary
+mapDictionary = {}
+graph = mapDictionary
+
+def bfs(starting_room_id):
+    q = Queue()
+    q.enqueue([starting_room_id])
+
+    visited = set()
+
+    while q.size() != 0:
+        path = q.dequeue()
+        current_room = path[-1]
+    
+        visited.add(current_room)
+    
+        for direction in graph[current_room]:
+            if graph[current_room][direction] is '?':
+                return path
+            
+            if graph[current_room][direction] not in visited:
+                new_path = list(path)
+                new_path.append(graph[current_room][direction])
+                q.enqueue(new_path)
 
 
-# TRAVERSAL TEST - DO NOT MODIFY
+
+# TRAVERSAL TEST
 visited_rooms = set()
 player.current_room = world.starting_room
 visited_rooms.add(player.current_room)
@@ -51,12 +80,12 @@ else:
 #######
 # UNCOMMENT TO WALK AROUND
 #######
-player.current_room.print_room_description(player)
-while True:
-    cmds = input("-> ").lower().split(" ")
-    if cmds[0] in ["n", "s", "e", "w"]:
-        player.travel(cmds[0], True)
-    elif cmds[0] == "q":
-        break
-    else:
-        print("I did not understand that command.")
+# player.current_room.print_room_description(player)
+# while True:
+#     cmds = input("-> ").lower().split(" ")
+#     if cmds[0] in ["n", "s", "e", "w"]:
+#         player.travel(cmds[0], True)
+#     elif cmds[0] == "q":
+#         break
+#     else:
+#         print("I did not understand that command.")
