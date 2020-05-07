@@ -58,6 +58,71 @@ def bfs(starting_room_id):
                 new_path.append(graph[current_room][direction])
                 q.enqueue(new_path)
 
+def dfs(starting_room):
+
+    reverse_directions = {'n':'s', 's':'n', 'e':'w', 'w':'e'} # Reverse the directions
+
+    counting_rms = 0
+
+    while len(graph) != len(room_graph):
+        current_room = player.current_room
+        room_id = current_room.id
+        room_dict = {}
+        
+        if room_id not in graph:
+            for i in current_room.get_exits(): # Repeat to find the possible exits.
+                room_dict[i] = '?'
+            
+            if traversal_path:
+                prevRoom = reverse_directions[traversal_path[-1]]
+                room_dict[prevRoom] = counting_rms
+
+            graph[room_id] = room_dict
+        
+        else:
+            room_dict = graph[room_id]    
+
+
+        possible_exits = list()
+
+        for direction in room_dict:
+            if room_dict[direction] is '?':
+ 
+                possible_exits.append(direction)
+                
+        if len(possible_exits) != 0:
+            random.shuffle(possible_exits)
+           
+            direction = possible_exits[0]
+            
+            traversal_path.append(direction) # Append the direction of the traversal_path.
+            
+            player.travel(direction) # Move the player by the travel().
+            
+            room_move = player.current_room
+              
+            graph[current_room.id][direction] = room_move.id # Current room.id and direction of the graph is set equal to room_move.id.
+            
+        else:
+            next_room = bfs(room_id) # Else use bfs to search for the next possible rooms and exits by using room_id.
+            
+            
+            if next_room is not None and len(next_room) != 0:
+                # For loop: Then repeat the length of the room to gain access to the room's id.
+                for i in range(len(next_room)-1):
+                    # Repeat the graph's next_room at the index to access the direction.
+                    for direction in graph[next_room[i]]:
+                        # If the next_room[i] and direction of the graph is equal to next_room[i + 1]:
+                        if graph[next_room[i]][direction] == next_room[i + 1]:
+                            
+                            traversal_path.append(direction)
+
+                            player.travel(direction)
+            else:
+                break
+        
+dfs(room_graph)
+
 
 
 # TRAVERSAL TEST
